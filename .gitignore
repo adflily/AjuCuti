@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# File environment lokal agar kredensial DB dan JWT tidak ikut ter-commit
+.env
+.env.local
+
+# Lampiran cuti hasil unggahan pengguna (folder tetap dipertahankan lewat .gitkeep)
+public/uploads/*
+!public/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
