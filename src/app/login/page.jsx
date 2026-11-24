@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { loginAction } from "@/actions/auth";
 
 function LoginForm() {
@@ -45,9 +46,14 @@ function LoginForm() {
       <div className="w-full max-w-md">
         {/* Header identitas aplikasi */}
         <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600 text-white font-bold text-xl shadow-sm mb-3">
-            AC
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Logo AjuCuti"
+            width={64}
+            height={64}
+            className="mx-auto mb-3 h-16 w-16 object-contain"
+            priority
+          />
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             AjuCuti
           </h1>

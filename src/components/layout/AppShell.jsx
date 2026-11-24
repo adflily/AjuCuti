@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/actions/auth";
 
@@ -178,9 +179,14 @@ export default function AppShell({
         {/* Identitas brand AjuCuti */}
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white shadow-sm">
-              AC
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Logo AjuCuti"
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              priority
+            />
             <div className="min-w-0">
               <p className="text-base font-bold leading-tight text-slate-900 truncate">
                 AjuCuti
@@ -302,8 +308,18 @@ export default function AppShell({
               </svg>
             </button>
 
-            <span className="lg:hidden font-bold text-slate-900 text-base truncate">
-              AjuCuti
+            {/* Logo + nama aplikasi untuk mobile */}
+            <span className="lg:hidden flex items-center gap-2 min-w-0">
+              <Image
+                src="/logo.png"
+                alt=""
+                width={28}
+                height={28}
+                className="h-7 w-7 shrink-0 object-contain"
+              />
+              <span className="font-bold text-slate-900 text-base truncate">
+                AjuCuti
+              </span>
             </span>
             <span className="hidden lg:inline text-sm font-medium text-slate-500 truncate">
               Sistem Manajemen Cuti Karyawan
