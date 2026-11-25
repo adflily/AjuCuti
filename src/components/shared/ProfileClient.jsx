@@ -6,6 +6,12 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { changePasswordAction, updateProfileAction } from "@/actions/profile";
 import { formatDateId, formatDays } from "@/lib/dateUtils";
 
+
+// Membuang semua karakter selain angka 0-9 (maksimal 15 digit)
+function sanitizePhoneInput(value) {
+  return String(value || "").replace(/\D/g, "").slice(0, 15);
+}
+
 // Komponen interaktif halaman bersama /profile
 // Kartu Sisa Kuota Cuti dan Jatah Cuti Tahunan hanya tampil untuk role user dan leader.
 
@@ -15,7 +21,7 @@ export default function ProfileClient({ profile, quota }) {
 
   // State form ubah profil
   const [fullName, setFullName] = useState(profile.full_name || "");
-  const [phone, setPhone] = useState(profile.phone || "");
+  const [phone, setPhone] = useState(sanitizePhoneInput(profile.phone || ""));
   const [address, setAddress] = useState(profile.address || "");
   const [profileFeedback, setProfileFeedback] = useState({ type: "", message: "" });
   const [profileErrors, setProfileErrors] = useState({});
@@ -211,9 +217,11 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="profilePhone"
                 type="tel"
-                autoComplete="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={15}
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(sanitizePhoneInput(e.target.value))}
                 disabled={isSavingProfile}
                 placeholder="contoh: 081234567890"
                 className="block w-full min-h-[44px] rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"

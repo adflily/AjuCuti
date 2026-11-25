@@ -59,9 +59,21 @@ const createUserSchema = z.object({
   role: z.enum(["admin", "user", "leader", "hrd"], {
     errorMap: () => ({ message: "Role tidak valid." }),
   }),
-  divisionId: z.union([z.coerce.number().int().positive(), z.literal(""), z.null(), z.undefined()]),
+  divisionId: z.union([
+    z.coerce.number().int().positive(),
+    z.literal(""),
+    z.null(),
+    z.undefined(),
+  ]),
   position: z.string().trim().max(100).optional().default(""),
-  phone: z.string().trim().max(30).optional().default(""),
+  phone: z
+    .string()
+    .trim()
+    .refine((val) => val === "" || /^\d{8,15}$/.test(val), {
+      message: "Nomor telepon hanya boleh berisi angka (8–15 digit).",
+    })
+    .optional()
+    .default(""),
   address: z.string().trim().max(500).optional().default(""),
   annualLeaveQuota: z.coerce
     .number()
@@ -98,8 +110,9 @@ export async function createUserAction(payload) {
   const parsed = createUserSchema.safeParse(payload);
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
+    const firstIssue = parsed.error.issues[0]?.message;
     return {
-      error: "Mohon periksa kembali data pengguna.",
+      error: firstIssue || "Mohon periksa kembali data pengguna.",
       fieldErrors: Object.fromEntries(
         Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] || ""])
       ),
@@ -147,6 +160,7 @@ export async function createUserAction(payload) {
         }
       }
 
+      // Gunakan COALESCE($11::date, CURRENT_DATE) agar aman jika kolom join_date NOT NULL
       const insertRes = await client.query(
         `INSERT INTO users (
           full_name,
@@ -164,7 +178,7 @@ export async function createUserAction(payload) {
         ) VALUES (
           $1, $2, $3, $4, $5,
           $6::int, $7, $8, $9,
-          $10::int, $11::date, TRUE
+          $10::int, COALESCE($11::date, CURRENT_DATE), TRUE
         )
         RETURNING id`,
         [
@@ -182,9 +196,20 @@ export async function createUserAction(payload) {
         ]
       );
 
-      // Generate employee_code otomatis dari ID pengguna (mis. EMP-007)
+      // Cari employee_code otomatis yang unik agar tidak bentrok dengan data seed
       const newId = insertRes.rows[0].id;
-      const autoCode = `EMP-${String(newId).padStart(3, "0")}`;
+      let seqNumber = newId;
+      let autoCode = `EMP-${String(seqNumber).padStart(3, "0")}`;
+
+      while (true) {
+        const existsCode = await client.query(
+          `SELECT 1 FROM users WHERE employee_code = $1 LIMIT 1`,
+          [autoCode]
+        );
+        if (!existsCode.rows[0]) break;
+        seqNumber += 1;
+        autoCode = `EMP-${String(seqNumber).padStart(3, "0")}`;
+      }
 
       await client.query(
         `UPDATE users SET employee_code = $2 WHERE id = $1::int`,
@@ -207,7 +232,24 @@ export async function createUserAction(payload) {
       return { error: error.message.replace("APP_ERROR:", "") };
     }
     console.error("Gagal membuat pengguna:", error);
-    return { error: "Gagal menambahkan pengguna. Silakan coba lagi." };
+    if (error?.code === "23505") {
+      return {
+        error: `Data duplikat pada database (${error.constraint || "unique"}).`,
+      };
+    }
+    if (error?.code === "23502") {
+      return {
+        error: `Kolom wajib "${error.column || "tidak diketahui"}" belum terisi.`,
+      };
+    }
+    if (error?.code === "23514") {
+      return {
+        error: `Data melanggar aturan tabel (${error.constraint || "check constraint"}).`,
+      };
+    }
+    return {
+      error: `Gagal menambahkan pengguna: ${error?.message || "Silakan coba lagi."}`,
+    };
   }
 }
 
@@ -220,8 +262,9 @@ export async function updateUserAction(payload) {
   const parsed = updateUserSchema.safeParse(payload);
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
+    const firstIssue = parsed.error.issues[0]?.message;
     return {
-      error: "Mohon periksa kembali data pengguna.",
+      error: firstIssue || "Mohon periksa kembali data pengguna.",
       fieldErrors: Object.fromEntries(
         Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] || ""])
       ),
@@ -285,7 +328,7 @@ export async function updateUserAction(payload) {
             phone = $8,
             address = $9,
             annual_leave_quota = $10::int,
-            join_date = $11::date,
+            join_date = COALESCE($11::date, join_date),
             is_active = $12
         WHERE id = $1::int
         RETURNING id`,
@@ -321,7 +364,9 @@ export async function updateUserAction(payload) {
       return { error: error.message.replace("APP_ERROR:", "") };
     }
     console.error("Gagal memperbarui pengguna:", error);
-    return { error: "Gagal memperbarui data pengguna. Silakan coba lagi." };
+    return {
+      error: `Gagal memperbarui data pengguna: ${error?.message || "Silakan coba lagi."}`,
+    };
   }
 }
 

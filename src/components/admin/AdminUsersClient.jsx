@@ -20,6 +20,7 @@ import { formatDateId } from "@/lib/dateUtils";
 // - Create User tidak punya input employee_code (otomatis EMP-<id>)
 // - Field kuota cuti hanya tampil jika role = user atau leader
 // - Kolom kuota di tabel menampilkan "-" untuk admin dan hrd
+// - Nomor telepon hanya menerima angka 0-9 (maksimal 15 digit)
 
 const ROLES_WITH_QUOTA = new Set(["user", "leader"]);
 
@@ -37,6 +38,11 @@ const EMPTY_FORM = {
   joinDate: "",
   isActive: true,
 };
+
+// Membuang semua karakter selain angka 0-9 (maksimal 15 digit)
+function sanitizePhoneInput(value) {
+  return String(value || "").replace(/\D/g, "").slice(0, 15);
+}
 
 export default function AdminUsersClient({
   currentAdminId,
@@ -118,7 +124,7 @@ export default function AdminUsersClient({
       role: user.role || "user",
       divisionId: user.division_id ? String(user.division_id) : "",
       position: user.position || "",
-      phone: user.phone || "",
+      phone: sanitizePhoneInput(user.phone || ""),
       address: user.address || "",
       annualLeaveQuota: hasQuota ? String(user.annual_leave_quota ?? 12) : "0",
       joinDate: user.join_date || "",
@@ -130,13 +136,20 @@ export default function AdminUsersClient({
   }
 
   function handleFieldChange(key, value) {
+    if (key === "phone") {
+      setFormValues((prev) => ({
+        ...prev,
+        phone: sanitizePhoneInput(value),
+      }));
+      return;
+    }
+
     if (key === "role") {
       setFormValues((prev) => {
         const nextHasQuota = ROLES_WITH_QUOTA.has(value);
         const prevHasQuota = ROLES_WITH_QUOTA.has(prev.role);
         let nextQuota = prev.annualLeaveQuota;
 
-        // Jika berpindah dari admin/hrd ke user/leader dan kuota masih 0/kosong, isi bawaan 12
         if (nextHasQuota && !prevHasQuota && (!nextQuota || nextQuota === "0")) {
           nextQuota = "12";
         }
@@ -161,7 +174,7 @@ export default function AdminUsersClient({
         role: formValues.role,
         divisionId: formValues.divisionId ? Number(formValues.divisionId) : null,
         position: formValues.position,
-        phone: formValues.phone,
+        phone: sanitizePhoneInput(formValues.phone),
         address: formValues.address,
         annualLeaveQuota: showQuotaField ? Number(formValues.annualLeaveQuota) : 0,
         joinDate: formValues.joinDate,
@@ -691,11 +704,17 @@ export default function AdminUsersClient({
               </label>
               <input
                 type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={15}
                 value={formValues.phone}
                 onChange={(e) => handleFieldChange("phone", e.target.value)}
                 placeholder="contoh: 081234567890"
                 className="block w-full min-h-[44px] rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
               />
+              {fieldErrors.phone && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>
+              )}
             </div>
 
             {/* Field Kuota Cuti Awal hanya tampil untuk role user dan leader */}

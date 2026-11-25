@@ -17,9 +17,8 @@ const updateProfileSchema = z.object({
   phone: z
     .string()
     .trim()
-    .max(30, "Nomor telepon maksimal 30 karakter.")
-    .refine((val) => val === "" || /^[0-9+\-\s()]{8,30}$/.test(val), {
-      message: "Format nomor telepon tidak valid (minimal 8 digit).",
+    .refine((val) => val === "" || /^\d{8,15}$/.test(val), {
+      message: "Nomor telepon hanya boleh berisi angka (8–15 digit).",
     })
     .optional()
     .default(""),

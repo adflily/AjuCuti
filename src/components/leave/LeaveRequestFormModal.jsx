@@ -9,6 +9,10 @@ import {
   getTodayDateString,
 } from "@/lib/dateUtils";
 
+// Membuang semua karakter selain angka 0-9 (maksimal 15 digit)
+function sanitizePhoneInput(value) {
+  return String(value || "").replace(/\D/g, "").slice(0, 15);
+}
 // Modal form pengajuan cuti lengkap (dipakai oleh /employee dan tab cuti pribadi /leader)
 
 export default function LeaveRequestFormModal({
@@ -33,7 +37,7 @@ export default function LeaveRequestFormModal({
   const [handoverUserId, setHandoverUserId] = useState("");
   const [handoverNotes, setHandoverNotes] = useState("");
   const [addressDuringLeave, setAddressDuringLeave] = useState(defaultAddress);
-  const [emergencyPhone, setEmergencyPhone] = useState(defaultPhone);
+  const [emergencyPhone, setEmergencyPhone] = useState(sanitizePhoneInput(defaultPhone));
 
   // State unggah lampiran via Route Handler /api/upload
   const [attachmentPath, setAttachmentPath] = useState("");
@@ -81,7 +85,7 @@ export default function LeaveRequestFormModal({
     setHandoverUserId("");
     setHandoverNotes("");
     setAddressDuringLeave(defaultAddress);
-    setEmergencyPhone(defaultPhone);
+    setEmergencyPhone(sanitizePhoneInput(defaultPhone));
     setAttachmentPath("");
     setAttachmentName("");
     setUploadError("");
@@ -447,8 +451,13 @@ export default function LeaveRequestFormModal({
             <input
               id="emergencyPhone"
               type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={15}
               value={emergencyPhone}
-              onChange={(e) => setEmergencyPhone(e.target.value)}
+              onChange={(e) =>
+                setEmergencyPhone(sanitizePhoneInput(e.target.value))
+              }
               disabled={isPending}
               placeholder="contoh: 081234567890"
               className="block w-full min-h-[44px] rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"

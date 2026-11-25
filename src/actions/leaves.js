@@ -50,9 +50,10 @@ const createLeaveSchema = z
     emergencyPhone: z
       .string()
       .trim()
-      .min(8, "Nomor kontak darurat minimal 8 digit.")
-      .max(30, "Nomor kontak darurat maksimal 30 karakter.")
-      .regex(/^[0-9+\-\s()]+$/, "Format nomor darurat tidak valid."),
+      .regex(
+        /^\d{8,15}$/,
+        "Nomor kontak darurat hanya boleh berisi angka (8–15 digit)."
+      ),
     attachmentPath: z.string().trim().max(255).optional().default(""),
     attachmentName: z.string().trim().max(255).optional().default(""),
   })
