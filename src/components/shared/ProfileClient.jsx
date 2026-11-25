@@ -165,7 +165,7 @@ export default function ProfileClient({ profile, quota }) {
 
           {profileFeedback.message && (
             <div
-              role="status"
+              role={profileFeedback.type === "error" ? "alert" : "status"}
               className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
                 profileFeedback.type === "error"
                   ? "border-red-200 bg-red-50 text-red-700"
@@ -187,6 +187,7 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="profileFullName"
                 type="text"
+                autoComplete="name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={isSavingProfile}
@@ -210,6 +211,7 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="profilePhone"
                 type="tel"
+                autoComplete="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={isSavingProfile}
@@ -249,7 +251,7 @@ export default function ProfileClient({ profile, quota }) {
             <button
               type="submit"
               disabled={isSavingProfile}
-              className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-60"
+              className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
             >
               {isSavingProfile ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
@@ -267,7 +269,7 @@ export default function ProfileClient({ profile, quota }) {
 
           {passwordFeedback.message && (
             <div
-              role="status"
+              role={passwordFeedback.type === "error" ? "alert" : "status"}
               className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
                 passwordFeedback.type === "error"
                   ? "border-red-200 bg-red-50 text-red-700"
@@ -289,6 +291,7 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="currentPassword"
                 type={showPasswords ? "text" : "password"}
+                autoComplete="current-password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 disabled={isSavingPassword}
@@ -312,6 +315,7 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="newPassword"
                 type={showPasswords ? "text" : "password"}
+                autoComplete="new-password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={isSavingPassword}
@@ -336,6 +340,7 @@ export default function ProfileClient({ profile, quota }) {
               <input
                 id="confirmPassword"
                 type={showPasswords ? "text" : "password"}
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isSavingPassword}
@@ -363,7 +368,7 @@ export default function ProfileClient({ profile, quota }) {
               <button
                 type="submit"
                 disabled={isSavingPassword}
-                className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 disabled:opacity-60"
+                className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-blue-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
               >
                 {isSavingPassword ? "Memperbarui..." : "Ganti Kata Sandi"}
               </button>
