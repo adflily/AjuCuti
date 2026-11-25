@@ -180,11 +180,11 @@ export default function AppShell({
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
           <div className="flex items-center gap-3 min-w-0">
             <Image
-              src="/logo.png"
+              src="/logo-icon.png"
               alt="Logo AjuCuti"
-              width={36}
-              height={36}
-              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              width={40}
+              height={40}
+              className="h-10 w-10 shrink-0 rounded-lg object-contain"
               priority
             />
             <div className="min-w-0">
@@ -310,13 +310,13 @@ export default function AppShell({
 
             {/* Logo + nama aplikasi untuk mobile */}
             <span className="lg:hidden flex items-center gap-2 min-w-0">
-              <Image
-                src="/logo.png"
-                alt=""
-                width={28}
-                height={28}
-                className="h-7 w-7 shrink-0 object-contain"
-              />
+                <Image
+                  src="/logo-icon.png"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 shrink-0 object-contain"
+                />
               <span className="font-bold text-slate-900 text-base truncate">
                 AjuCuti
               </span>

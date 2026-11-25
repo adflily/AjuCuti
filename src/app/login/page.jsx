@@ -45,19 +45,18 @@ function LoginForm() {
     <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         {/* Header identitas aplikasi */}
+        {/* Header identitas aplikasi */}
         <div className="text-center mb-6 sm:mb-8">
           <Image
             src="/logo.png"
             alt="Logo AjuCuti"
-            width={64}
-            height={64}
-            className="mx-auto mb-3 h-16 w-16 object-contain"
+            width={320}
+            height={160}
+            className="mx-auto h-36 w-auto object-contain mix-blend-multiply"
             priority
           />
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            AjuCuti
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <h1 className="sr-only">AjuCuti</h1>
+          <p className="-mt-2 text-sm text-slate-600">
             Sistem Manajemen Cuti Karyawan
           </p>
         </div>
