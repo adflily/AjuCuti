@@ -60,8 +60,8 @@ const STATUS_STYLES = {
   },
   user: {
     label: "Karyawan",
-    className: "bg-blue-50 text-blue-800 border-blue-200",
-    dotClass: "bg-blue-500",
+    className: "bg-sky-50 text-sky-800 border-sky-200",
+    dotClass: "bg-sky-500",
   },
   leader: {
     label: "Ketua Divisi",
