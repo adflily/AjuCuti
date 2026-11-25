@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+@theme {
+  /* Skala utama: coklat emas dari logo AjuCuti (menimpa blue-*) */
+  --color-blue-50: #FBF7EC;
+  --color-blue-100: #F6EDD3;
+  --color-blue-200: #EFDDA6;
+  --color-blue-300: #E9C96A;
+  --color-blue-400: #C9A04E;
+  --color-blue-500: #A98340;
+  --color-blue-600: #8C6A35;
+  --color-blue-700: #735329;
+  --color-blue-800: #5A4120;
+  --color-blue-900: #432F17;
+
+  /* Latar halaman krem hangat (menimpa slate-50) */
+  --color-slate-50: #FAF7F2;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
